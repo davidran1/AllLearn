@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>אימות כתובת דוא"ל</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 50px;
+        }
+        .verification-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .activation-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .instructions {
+            color: #666;
+            line-height: 1.6;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <h1>אימות כתובת דוא"ל</h1>
+        
+        <div class="email-header">
+            <p> !<%= user.name %> היי </p> 
+            <br>
+        <p>
+            תודה שנרשמת!
+            על מנת להשלים את תהליך ההרשמה, אנא הזן את קוד האימות הבא:
+        </p>
+        
+        <div class="activation-code">
+            <%= activaionCode %>
+        </div>
+        
+        <p class="instructions">
+            קוד זה תקף למשך 5 דקות מרגע השליחה.
+            <br>
+            אם לא ביקשת הרשמה זו, את/ה יכול/ה להתעלם מהודעה זו.
+        </p>
+        
+        <a href="/verify-email?code=<%= verificationCode %>" class="btn">
+            אמת דוא"ל
+        </a>
+    </div>
+</body>
+</html>
