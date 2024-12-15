@@ -49,7 +49,8 @@
         <h1>אימות כתובת דוא"ל</h1>
         
         <div class="email-header">
-            <p> !<%= user.name %> היי </p> 
+            <p>  
+                <%= user.name %> ברוך הבא! </p> 
             <br>
         <p>
             תודה שנרשמת!
@@ -57,7 +58,7 @@
         </p>
         
         <div class="activation-code">
-            <%= activaionCode %>
+            <%= activationCode %>
         </div>
         
         <p class="instructions">
@@ -66,7 +67,7 @@
             אם לא ביקשת הרשמה זו, את/ה יכול/ה להתעלם מהודעה זו.
         </p>
         
-        <a href="/verify-email?code=<%= verificationCode %>" class="btn">
+        <a href="/verify-email?code=<%= activationCode %>" class="btn">
             אמת דוא"ל
         </a>
     </div>
