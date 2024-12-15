@@ -7,6 +7,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
 import sendMail from "../utils/sendMail";
+import { sendToken } from "../utils/jwt";
 
 //register user
 interface IRegistrationBody {
@@ -23,7 +24,7 @@ export const registrationUser = CatchAsyncError(
 
       const isEmailExist = await userModel.findOne({ email }); //check if the email already exist
       if (isEmailExist) {
-        return next(new ErrorHandler("Email already exist", 400));
+        return next(new ErrorHandler("מייל כבר קיים במערכת!", 400));
       }
 
       const user: IRegistrationBody = {
@@ -123,3 +124,34 @@ export const activateUser = CatchAsyncError(
     }
   }
 );
+
+//login user
+interface ILoginRequest{
+  email:string;
+  password:string;
+}
+
+export const loginUser = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
+  try{
+    const {email,password} = req.body as ILoginRequest;
+    if(!email || !password){
+      return next (new ErrorHandler("אנא הזן מייל וסיסמא" , 400));
+    }
+
+    const user = await userModel.findOne({email}).select("+password");
+    if(!user){
+      return next (new ErrorHandler("מייל או סיסמא אינם נכונים", 400));
+    }
+
+    const isPasswordMatch = await user.comparePassword(password);
+    if(!isPasswordMatch){
+      return next (new ErrorHandler("מייל או סיסמא אינם נכונים", 400));
+    }
+    
+    sendToken(user,200,res);
+  }
+
+  catch(error:any){
+    return next (new ErrorHandler(error.message , 400));
+  }
+})
