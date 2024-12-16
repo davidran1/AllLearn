@@ -2,6 +2,7 @@ require("dotenv").config();
 import { Response } from "express";
 import { IUser } from "../models/user.model";
 import { redis } from "./redis";
+import { RedisKey } from "ioredis";
 
 interface ITokenOptions {
     expires:Date;
@@ -16,7 +17,7 @@ export const sendToken = (user:IUser , statusCode:number , res:Response)=>{
     const refreshToken = user.SignRefreshToken();
 
     //upload session to redis
-    redis.set(user.id ,JSON.stringify(user)as any);
+    redis.set(user._id as RedisKey ,JSON.stringify(user)as any);
 
     //parse enviroment variables to integrates
     const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE|| '300',10);
@@ -38,7 +39,7 @@ export const sendToken = (user:IUser , statusCode:number , res:Response)=>{
     }
 
     //only set secure to true in production
-    if(process.env.NODE_DEV === "prouction"){
+    if(process.env.NODE_DEV === "production"){
         accessTokenOptions.secure=true;
     }
 

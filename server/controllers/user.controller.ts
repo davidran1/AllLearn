@@ -8,6 +8,9 @@ import ejs from "ejs";
 import path from "path";
 import sendMail from "../utils/sendMail";
 import { sendToken } from "../utils/jwt";
+import { redis } from "../utils/redis";
+import { RedisKey } from "ioredis";
+import { isAuthenticated } from '../middleware/auth';
 
 //register user
 interface IRegistrationBody {
@@ -147,7 +150,6 @@ export const loginUser = CatchAsyncError(async(req:Request , res:Response , next
     if(!isPasswordMatch){
       return next (new ErrorHandler("מייל או סיסמא אינם נכונים", 400));
     }
-    
     sendToken(user,200,res);
   }
 
@@ -162,7 +164,7 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
-
+      redis.del(req.user?._id as RedisKey);
       res.status(200).json({
         success: true,
         message: "התנתקת בהצלחה",
