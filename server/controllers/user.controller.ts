@@ -10,7 +10,6 @@ import sendMail from "../utils/sendMail";
 import { sendToken } from "../utils/jwt";
 import { redis } from "../utils/redis";
 import { RedisKey } from "ioredis";
-import { isAuthenticated } from '../middleware/auth';
 
 //register user
 interface IRegistrationBody {
@@ -164,7 +163,7 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
-      redis.del(req.user?._id as RedisKey);
+      redis.del(req.user?._id as RedisKey);//delete from redis
       res.status(200).json({
         success: true,
         message: "התנתקת בהצלחה",
