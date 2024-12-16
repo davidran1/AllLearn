@@ -209,6 +209,9 @@ export const updateAccessToken = CatchAsyncError(
         process.env.REFRESH_TOKEN as string,
         { expiresIn: "3d" }
       );
+
+      req.user=user;
+
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
@@ -256,3 +259,77 @@ export const socialAuth = CatchAsyncError(
     }
   }
 );
+
+//Update user information
+interface IUpdateUserInfo{
+  name?:string;
+  email?:string;
+}
+
+export const updateUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+     const {name , email} = req.body as IUpdateUserInfo;
+     const userId = req.user?._id;
+     const user = await userModel.findById(userId);
+     if(email &&user){
+      const isEmailExist = await userModel.findOne({email});
+      if(isEmailExist)
+        return next(new ErrorHandler("מייל כבר קיים במערכת", 400));
+      user.email =email;
+     }
+
+     if(name &&user){
+      user.name = name;
+     }
+     await user?.save();
+     await redis.set(userId as RedisKey,JSON.stringify(user));
+
+     res.status(201).json({
+      success:true,
+      user,
+     })
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+
+//Update user password
+interface IUpdatePassword{
+  newPassword?:string;
+  oldPassword?:string;
+}
+
+export const updatePassword = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {oldPassword , newPassword} = req.body as IUpdatePassword;
+      if(!oldPassword || !newPassword)
+        return next(new ErrorHandler("אנא הזן סיסמא נוכחית וסיסמא חדשה", 400));
+      const user = await userModel.findById(req.user?._id).select("+password");
+      if(user?.password ===undefined){
+        return next(new ErrorHandler("משתמש לא מזוהה", 400));
+      }
+      const isPasswordMatch = await user?.comparePassword(oldPassword as string);
+      if(!isPasswordMatch){
+        return next(new ErrorHandler("הסיסמא שהזנת שגויה", 400));
+      }
+      user.password=newPassword as string;
+      await user.save();
+      await redis.set(req.user?._id as RedisKey,JSON.stringify(user));
+      res.status(201).json({
+        success:true,
+        user,
+      })
+
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+
+
+
