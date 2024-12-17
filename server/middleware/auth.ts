@@ -8,7 +8,7 @@ import { redis } from "../utils/redis";
 //authenticate user
 export const isAuthenticated = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     const accessToken = req.cookies.access_token;
-    console.log(req);
+
     if(!accessToken)
         return next(new ErrorHandler('משתמש לא מאומת',400));
 
@@ -24,4 +24,15 @@ export const isAuthenticated = CatchAsyncError(async(req:Request , res:Response 
     req.user = JSON.parse(user);
     next();
 
-})
+});
+
+//validate user role
+
+export const authorizeRoles =(...roles:string[])=> {
+    return (req:Request , res:Response , next:NextFunction)=>{
+        if(!roles.includes(req.user?.role || '')){
+            return next(new ErrorHandler('אין לך גישה מתאימה לדף הנוכחי' , 403));
+        }
+        next();
+    }
+}
