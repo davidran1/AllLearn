@@ -45,6 +45,7 @@ export const uploadCourse = CatchAsyncError(
 export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const courseId = req.params.id;
       const data = req.body;
       const thumbnail = data.thumbnail;
       if (thumbnail) {
@@ -59,7 +60,6 @@ export const editCourse = CatchAsyncError(
           url: myCloud.secure_url,
         };
       }
-      const courseId = req.params.id;
       const course = await CourseModel.findByIdAndUpdate(
         courseId,
         { $set: data },
