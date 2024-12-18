@@ -133,6 +133,27 @@ export const getSingleCourse = CatchAsyncError(
   }
 );
 
+//get course content for valid user
+export const getCourseByUser = CatchAsyncError(async(req:Request,res:Response ,next:NextFunction)=>{
+    try{
+        const userCourseList = req.user?.courses;
+        const courseId= req.params.id;
+        const coursExist = userCourseList?.find((course:any)=>course._id=== courseId);
+        if(!coursExist){
+            return next(new ErrorHandler("אין לך גישה לקורס אליו אתה מנסה לגשת",500));
+        }
+        const course = await CourseModel.findById(courseId);
+        const content = course?.courseData;
+        res.status(200).json({
+            success: true,
+            content,
+          });
+
+   }catch(error:any) {
+    return next(new ErrorHandler(error.message,500));
+   }
+})
+
 /*
 export const uploadCourse = CatchAsyncError(async(req:Request,res:Response ,next:NextFunction)=>{
     try{
