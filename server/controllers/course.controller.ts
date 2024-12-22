@@ -8,6 +8,7 @@ import cloudinary from "cloudinary";
 import { createCourse } from "../services/course.service";
 import CourseModel from "../models/course.model";
 import mongoose from "mongoose";
+import NotificationModel from "../models/notification.model";
 
 //upload course
 export const uploadCourse = CatchAsyncError(
@@ -182,6 +183,12 @@ export const addQuestion = CatchAsyncError(
 
       courseContent.questions.push(newQuestion);
 
+      await NotificationModel.create({
+        user:req.user?._id,
+        title:"נוספה שאלה חדשה",
+        message:`נוספה שאלה חדשה בקורס ${courseContent.title} בשיעור ${courseContent.title}`,
+      })
+
       //save the updated course
       await course?.save();
       res.status(200).json({
@@ -233,7 +240,11 @@ export const addAnswer = CatchAsyncError(
       question.questionReplies?.push(newAnswer);
       await course?.save();
       if (req.user?._id === question.user._id) {
-        //create a notofication
+        await NotificationModel.create({
+          user:req.user?._id,
+          title:"נוספה תשובה לשאלה",
+          message:`נוספה תשובה לשאלה בקורס ${courseContent.title} בשיעור ${courseContent.title}`,
+        })
       } else {
         //send mail to user that he have reply
       }
