@@ -9,6 +9,7 @@ import { createCourse, getAllCoursesService } from "../services/course.service";
 import CourseModel from "../models/course.model";
 import mongoose from "mongoose";
 import NotificationModel from "../models/notification.model";
+import exp from "constants";
 
 //upload course
 export const uploadCourse = CatchAsyncError(
@@ -264,4 +265,24 @@ export const getAllCoursesAdmin = CatchAsyncError(async (req: Request, res: Resp
   }catch(error:any){
     return next(new ErrorHandler(error.message,500));
   };
+});
+
+
+//delete course
+export const deleteCourse = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const {id} = req.params; 
+    const course = await CourseModel.findById(id);
+    if(!course){
+      return next(new ErrorHandler("קורס לא נמצא",404));
+    }
+    await CourseModel.deleteOne({id});
+    await redis.del(id);
+    res.status(200).json({
+      success:true,
+      message:"הקורס נמחק בהצלחה"
+    });
+  }catch(error:any){
+    return next(new ErrorHandler(error.message,500));
+  }
 });
