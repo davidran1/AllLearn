@@ -9,6 +9,7 @@ import courseRouter from "./routes/course.route";
 import orderRouter from "./routes/order.routes";
 import notificationRouter from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
+import layoutRouter from "./routes/layout.route";
 
 
 //body paresr
@@ -20,7 +21,7 @@ app.use(cookieParser());
 //cors
 app.use(cors({origin:process.env.ORIGIN , credentials: true}));
 
-app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRouter,analyticsRouter);
+app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRouter,analyticsRouter,layoutRouter);
 
 
 
