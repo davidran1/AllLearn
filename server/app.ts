@@ -8,6 +8,7 @@ import userRouter from "./routes/user.route";
 import courseRouter from "./routes/course.route";
 import orderRouter from "./routes/order.routes";
 import notificationRouter from "./routes/notification.route";
+import analyticsRouter from "./routes/analytics.route";
 
 
 //body paresr
@@ -19,7 +20,7 @@ app.use(cookieParser());
 //cors
 app.use(cors({origin:process.env.ORIGIN , credentials: true}));
 
-app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRouter);
+app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRouter,analyticsRouter);
 
 
 
