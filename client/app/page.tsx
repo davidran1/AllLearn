@@ -13,7 +13,7 @@ const Page: FC<props> = (props) => {
     <div>
       <Heading
         title="All-Learn"
-        description="ברוכים הבאה לאול-ירן ת לסטודנטים שאוהבים אול-אין"
+        description="ברוכים הבאה לאול-ירן , לסטודנטים שאוהבים אול-אין"
         keywords="מדעי המחשב , שיעורים פרטיים"
       />
       <Header
